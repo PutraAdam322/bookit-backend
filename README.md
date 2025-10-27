@@ -1,7 +1,7 @@
 
 ---
 
-## ⚙️ **Backend — `bookit-backend`**
+## **Backend — `bookit-backend`**
 
 ```markdown
 # Bookit (Backend)
@@ -11,7 +11,7 @@ Developed with **Go**, using **Gin** for routing and **GORM** for ORM database m
 
 ---
 
-## ✨ Features
+## Features
 
 1. **User Authentication**
    - User registration and login endpoints.
@@ -43,7 +43,7 @@ Developed with **Go**, using **Gin** for routing and **GORM** for ORM database m
    - Centralized middleware for consistent error messages.
    - Validates input payloads using Gin’s binding and validator features.
 
-## 🧩 Tech Stack
+## Tech Stack
 
 - **Go** (Gin Framework)
 - **GORM** (ORM)
