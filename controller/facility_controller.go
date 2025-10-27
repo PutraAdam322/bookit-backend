@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"bookit.com/dto"
 	"bookit.com/model"
@@ -27,6 +28,28 @@ func NewFacilityController(facilityService FacilityService) *FacilityController 
 	return &FacilityController{
 		facilityService: facilityService,
 	}
+}
+
+func (c *FacilityController) GetByID(ctx *gin.Context) {
+	idStr := ctx.Param("id")
+	id64, err := strconv.ParseUint(idStr, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, apix.HTTPResponse{
+			Message: "invalid id",
+			Data:    nil,
+		})
+		return
+	}
+	id := uint(id64)
+	blog, err := c.facilityService.GetByID(id)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, apix.HTTPResponse{
+			Message: "blog not found",
+			Data:    err.Error(),
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, blog)
 }
 
 func (c *FacilityController) GetAll(ctx *gin.Context) {
@@ -59,10 +82,10 @@ func (c *FacilityController) Create(ctx *gin.Context) {
 	}
 
 	facility := model.Facility{
-		Name:     input.Name,
-		Price:    input.Price,
-		Capacity: input.Capacity,
-		//Available: input.Available,
+		Name:      input.Name,
+		Price:     input.Price,
+		Capacity:  input.Capacity,
+		Available: input.Available,
 	}
 
 	created, err := c.facilityService.Create(&facility)
@@ -89,10 +112,10 @@ func (c *FacilityController) Update(ctx *gin.Context) {
 	}
 
 	facility := model.Facility{
-		Name:     input.Name,
-		Price:    input.Price,
-		Capacity: input.Capacity,
-		//Available: input.Available,
+		Name:      input.Name,
+		Price:     input.Price,
+		Capacity:  input.Capacity,
+		Available: input.Available,
 	}
 
 	updated, err := c.facilityService.Update(&facility)

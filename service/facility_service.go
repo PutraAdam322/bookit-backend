@@ -25,7 +25,7 @@ func (f *FacilityService) GetAll() ([]model.Facility, error) {
 	return f.facilityRepository.GetAll()
 }
 
-func (f *FacilityService) CreateFacility(facility *model.Facility) (*model.Facility, error) {
+func (f *FacilityService) Create(facility *model.Facility) (*model.Facility, error) {
 	return f.facilityRepository.Create(facility)
 }
 

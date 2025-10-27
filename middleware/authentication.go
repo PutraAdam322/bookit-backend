@@ -44,7 +44,7 @@ func Authenticate(jwtService JWTService) gin.HandlerFunc {
 		}
 
 		userID, err := jwtService.GetUserByTokenID(authHeader)
-		ctx.Set("user_id", userID)
+		ctx.Set("user_id", int(userID))
 		ctx.Next()
 	}
 }

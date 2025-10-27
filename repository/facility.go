@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"time"
 
 	"bookit.com/model"
 
@@ -29,13 +30,29 @@ func (f *FacilityRepository) GetAll() ([]model.Facility, error) {
 }
 
 func (f *FacilityRepository) GetByID(id uint) (*model.Facility, error) {
-	var facility model.Facility
-	tx := f.db.Where("id = ?", id).First(&facility)
+	var fac model.Facility
+
+	loc, err := time.LoadLocation("Asia/Kuala_Lumpur")
+	if err != nil {
+		loc = time.Local
+	}
+	now := time.Now().In(loc)
+	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, loc)
+	weekday := now.Weekday()
+	daysToSat := (int(time.Saturday) - int(weekday) + 7) % 7
+	satStart := todayStart.AddDate(0, 0, daysToSat)
+	sunEnd := satStart.AddDate(0, 0, 1).Add(time.Hour*23 + time.Minute*59 + time.Second*59).Add(time.Nanosecond * 999999999)
+
+	fmt.Println(satStart, sunEnd)
+
+	tx := f.db.
+		Preload("BookingSlots", "start_time BETWEEN (?) AND (?)", satStart, sunEnd).
+		First(&fac, id)
+
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
-
-	return &facility, nil
+	return &fac, nil
 }
 
 func (f *FacilityRepository) Create(facility *model.Facility) (*model.Facility, error) {
