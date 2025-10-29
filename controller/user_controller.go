@@ -17,6 +17,7 @@ type UserService interface {
 	Login(user *model.User) (string, error)
 	AdminLogin(user *model.User) (string, error)
 	GetByID(id uint) (*model.User, error)
+	GetByIDPreloadBooking(id uint) (*model.User, error)
 	Update(user *model.User) (*model.User, error)
 }
 
@@ -136,6 +137,23 @@ func (c *UserController) Login(ctx *gin.Context) {
 func (c *UserController) GetUser(ctx *gin.Context) {
 	userID := ctx.GetInt("user_id")
 	res, err := c.userService.GetByID(uint(userID))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, apix.HTTPResponse{
+			Message: "failed to get user",
+			Data:    err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusCreated, apix.HTTPResponse{
+		Message: "successfully get user",
+		Data:    res,
+	})
+}
+
+func (c *UserController) GetUserWithBooking(ctx *gin.Context) {
+	userID := ctx.GetInt("user_id")
+	res, err := c.userService.GetByIDPreloadBooking(uint(userID))
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, apix.HTTPResponse{
 			Message: "failed to get user",

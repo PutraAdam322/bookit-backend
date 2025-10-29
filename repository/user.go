@@ -28,6 +28,16 @@ func (usr *UserRepository) GetByID(id uint) (*model.User, error) {
 	return &user, nil
 }
 
+func (usr *UserRepository) GetByIDPreloadBooking(id uint) (*model.User, error) {
+	var user model.User
+	tx := usr.db.Preload("Bookings").Where("id = ?", id).First(&user)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return &user, nil
+}
+
 func (usr *UserRepository) GetByEmail(email string) (*model.User, error) {
 	var user model.User
 	tx := usr.db.Where("email = ?", email).First(&user)
