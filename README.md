@@ -3,7 +3,7 @@
 
 ## **Backend — `bookit-backend`**
 
-```markdown
+
 # Bookit (Backend)
 
 A lightweight backend API for the Bookit prototype.  
