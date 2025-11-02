@@ -19,7 +19,7 @@ func main() {
 	godotenv.Load()
 	db := db.DBconnect()
 
-	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.User{}, &model.Booking{}, &model.BookingSlot{}, &model.Facility{})
 
 	userRepo := repository.NewUserRepository(db)
 	fctRepo := repository.NewFacilityRepository(db)
@@ -35,14 +35,14 @@ func main() {
 	userCtrl := controller.NewUserController(userSvc)
 	fctCtrl := controller.NewFacilityController(fctSvc)
 	bkngCtrl := controller.NewBookingController(bkngSvc, bkgsSvc)
-	//bkgSCtrl := controller.NewBookingSlotController(bkgsSvc)
+	bkgSCtrl := controller.NewBookingSlotController(bkgsSvc)
 
 	r := gin.Default()
 	r.Use(gin.Recovery())
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:3001"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		AllowCredentials: true,
 	}))
 	r.Use(middleware.CustomLogger())
@@ -50,6 +50,7 @@ func main() {
 	routes.UserRoutes(r, userCtrl, jwtSvc)
 	routes.FacilityRoutes(r, fctCtrl, jwtSvc)
 	routes.BookingRoutes(r, bkngCtrl, jwtSvc)
+	routes.BookingSlotRoutes(r, bkgSCtrl, jwtSvc)
 
 	if err := r.Run(":8080"); err != nil {
 		log.Fatal(err)

@@ -9,6 +9,7 @@ type BookingRepository interface {
 	Update(booking *model.Booking) (*model.Booking, error)
 	GetAll() ([]model.Booking, error)
 	GetByID(id uint) (*model.Booking, error)
+	GetByUserID(uid uint) ([]model.Booking, error)
 	//Delete(id uint) error
 }
 
@@ -35,6 +36,10 @@ func (s *BookingService) CreateBooking(booking *model.Booking) (*model.Booking, 
 // GetByID retrieves a booking by ID
 func (s *BookingService) GetByID(id uint) (*model.Booking, error) {
 	return s.bookingRepository.GetByID(id)
+}
+
+func (s *BookingService) GetByUserID(id uint) ([]model.Booking, error) {
+	return s.bookingRepository.GetByUserID(id)
 }
 
 // Update updates a booking after checking existence

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"bookit.com/dto"
 	"bookit.com/model"
@@ -17,6 +18,7 @@ type BookingService interface {
 	Update(booking *model.Booking) (*model.Booking, error)
 	GetAll() ([]model.Booking, error)
 	GetByID(id uint) (*model.Booking, error)
+	GetByUserID(uid uint) ([]model.Booking, error)
 }
 
 type BookingController struct {
@@ -29,6 +31,53 @@ func NewBookingController(bookingService BookingService, bookingSlotService Book
 		bookingService:     bookingService,
 		bookingSlotService: bookingSlotService,
 	}
+}
+
+func (c *BookingController) GetByUserID(ctx *gin.Context) {
+	IntUserID := ctx.GetInt("user_id")
+	userID := uint(IntUserID)
+	//fmt.Printf("User ID: %d", userID)
+	bookings, err := c.bookingService.GetByUserID(userID)
+	//fmt.Println(bookings)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, apix.HTTPResponse{
+			Message: "failed to get bookings",
+			Data:    err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, apix.HTTPResponse{
+		Message: "get all bookings successfully",
+		Data:    bookings,
+	})
+}
+
+func (c *BookingController) GetByID(ctx *gin.Context) {
+	idStr := ctx.Param("id")
+	id64, err := strconv.ParseUint(idStr, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, apix.HTTPResponse{
+			Message: "invalid id",
+			Data:    nil,
+		})
+		return
+	}
+	id := uint(id64)
+
+	bookings, err := c.bookingService.GetByID(id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, apix.HTTPResponse{
+			Message: "failed to get bookings",
+			Data:    err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, apix.HTTPResponse{
+		Message: "get all bookings successfully",
+		Data:    bookings,
+	})
 }
 
 func (c *BookingController) GetAll(ctx *gin.Context) {
@@ -62,6 +111,7 @@ func (c *BookingController) Create(ctx *gin.Context) {
 
 	booking := model.Booking{
 		TotalPrice:    input.TotalPrice,
+		Status:        "Confirmed",
 		BookingSlotID: input.BookingSlotID,
 		UserID:        UserID,
 	}
@@ -81,6 +131,9 @@ func (c *BookingController) Create(ctx *gin.Context) {
 }
 
 func (c *BookingController) Update(ctx *gin.Context) {
+	idStr := ctx.Param("id")
+	id64, err := strconv.ParseUint(idStr, 10, 64)
+
 	var input dto.UpdateBookingDTO
 	if err := ctx.ShouldBindJSON(&input); err != nil {
 		ve, _ := validatorx.ParseValidatorErrors(err)
@@ -92,12 +145,38 @@ func (c *BookingController) Update(ctx *gin.Context) {
 	}
 
 	booking := model.Booking{
-		ID:         input.ID,
+		ID:         uint(id64),
 		TotalPrice: input.TotalPrice,
 	}
 
 	updated, err := c.bookingService.Update(&booking)
 	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, apix.HTTPResponse{
+			Message: "failed to update booking",
+			Data:    err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, apix.HTTPResponse{
+		Message: "booking is updated",
+		Data:    updated,
+	})
+}
+
+func (c *BookingController) Cancel(ctx *gin.Context) {
+	idStr := ctx.Param("id")
+	id64, err := strconv.ParseUint(idStr, 10, 64)
+	bk, errBk := c.bookingService.GetByID(uint(id64))
+
+	booking := model.Booking{
+		ID:     uint(id64),
+		Status: "cancelled",
+	}
+	bookingSlot, errG := c.bookingSlotService.GetByID(bk.BookingSlotID)
+	_, errU := c.bookingSlotService.UpdateByCancel(bookingSlot)
+	updated, err := c.bookingService.Update(&booking)
+	if errBk != nil || errG != nil || errU != nil || err != nil {
 		ctx.JSON(http.StatusInternalServerError, apix.HTTPResponse{
 			Message: "failed to update booking",
 			Data:    err.Error(),

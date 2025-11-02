@@ -10,8 +10,8 @@ import (
 func BookingRoutes(router *gin.Engine, BookingController *controller.BookingController, jwtService middleware.JWTService) {
 	bookingRoutes := router.Group("/api/v1/bookings")
 	{
-		bookingRoutes.GET("/:id", BookingController.GetAll)
 		bookingRoutes.POST("/create", middleware.Authenticate(jwtService), BookingController.Create)
-		bookingRoutes.GET("", middleware.Authenticate(jwtService), BookingController.GetAll)
+		bookingRoutes.GET("/mybook", middleware.Authenticate(jwtService), BookingController.GetByUserID)
+		bookingRoutes.PATCH(("/:id/cancel"), middleware.Authenticate(jwtService), BookingController.Cancel)
 	}
 }

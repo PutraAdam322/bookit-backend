@@ -13,4 +13,5 @@ type BookingSlot struct {
 	StartTime   time.Time `json:"start_time" gorm:"not null;index"`
 	EndTime     time.Time `json:"end_time" gorm:"not null;index"`
 	IsAvailable bool      `json:"is_available" gorm:"not null;default:true"`
+	Facility    Facility  `gorm:"foreignKey:FacilityID" json:"facility,omitempty"`
 }

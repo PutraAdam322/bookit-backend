@@ -38,7 +38,7 @@ func (j *jwtService) GenerateToken(UserID uint) (string, error) {
 	claims := &jwtCustomClaim{
 		strconv.Itoa(int(UserID)),
 		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 15)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 6)),
 			Issuer:    j.issuer,
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},

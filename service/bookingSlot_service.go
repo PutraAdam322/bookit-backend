@@ -6,6 +6,7 @@ type BookingSlotRepository interface {
 	Create(slot *model.BookingSlot) (*model.BookingSlot, error)
 	Update(slot *model.BookingSlot) (*model.BookingSlot, error)
 	UpdateByBooking(slot *model.BookingSlot) (*model.BookingSlot, error)
+	UpdateByCancel(slot *model.BookingSlot) (*model.BookingSlot, error)
 	GetAll() ([]model.BookingSlot, error)
 	GetByID(id uint) (*model.BookingSlot, error)
 	Delete(id uint) error
@@ -46,6 +47,14 @@ func (s *BookingSlotService) UpdateByBooking(slot *model.BookingSlot) (*model.Bo
 		return nil, err
 	}
 	return s.repo.UpdateByBooking(slot)
+}
+
+func (s *BookingSlotService) UpdateByCancel(slot *model.BookingSlot) (*model.BookingSlot, error) {
+	_, err := s.repo.GetByID(slot.ID)
+	if err != nil {
+		return nil, err
+	}
+	return s.repo.UpdateByCancel(slot)
 }
 
 func (s *BookingSlotService) Delete(id uint) error {

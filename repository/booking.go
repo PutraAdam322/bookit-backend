@@ -16,7 +16,6 @@ func NewBookingRepository(db *gorm.DB) *BookingRepository {
 	}
 }
 
-// GetAll retrieves all bookings
 func (r *BookingRepository) GetAll() ([]model.Booking, error) {
 	var bookings []model.Booking
 	tx := r.db.Find(&bookings)
@@ -28,7 +27,7 @@ func (r *BookingRepository) GetAll() ([]model.Booking, error) {
 
 func (r *BookingRepository) GetByID(id uint) (*model.Booking, error) {
 	var booking model.Booking
-	tx := r.db.First(&booking, id)
+	tx := r.db.Preload("BookingSlot.Facility").First(&booking, id)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -37,7 +36,10 @@ func (r *BookingRepository) GetByID(id uint) (*model.Booking, error) {
 
 func (r *BookingRepository) GetByUserID(uid uint) ([]model.Booking, error) {
 	var bookings []model.Booking
-	tx := r.db.Where("user_id = ?", uid).Find(&bookings)
+	tx := r.db.
+		Preload("BookingSlot.Facility").
+		Where("user_id = ?", uid).
+		Find(&bookings)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -60,8 +62,7 @@ func (r *BookingRepository) Update(booking *model.Booking) (*model.Booking, erro
 	return booking, nil
 }
 
-// Delete removes a booking by ID
-/*func (r *BookingRepository) Delete(id uint) error {
+func (r *BookingRepository) Delete(id uint) error {
 	tx := r.db.Delete(&model.Booking{}, id)
 	return tx.Error
-}*/
+}

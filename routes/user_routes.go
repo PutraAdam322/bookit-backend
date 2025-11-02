@@ -12,7 +12,6 @@ func UserRoutes(router *gin.Engine, userController *controller.UserController, j
 	{
 		userRoutes.POST("/register", userController.Register)
 		userRoutes.POST("/login", userController.Login)
-		userRoutes.GET("/bookings", middleware.Authenticate(jwtService), userController.GetUserWithBooking)
 		userRoutes.GET("", middleware.Authenticate(jwtService), userController.GetUser)
 	}
 }

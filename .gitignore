@@ -10,6 +10,8 @@
 *.env
 .\seeder
 *\seeder.go
+.\test
+*\test.go
 
 # Test binary, built with `go test -c`
 *.test

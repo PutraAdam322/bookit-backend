@@ -43,7 +43,7 @@ func main() {
 	fmt.Println("✅ Database migrated.")
 
 	// timezone: Kuala Lumpur
-	loc, err := time.LoadLocation("Asia/Kuala_Lumpur")
+	/*loc, err := time.LoadLocation("Asia/Kuala_Lumpur")
 	if err != nil {
 		log.Printf("⚠️ Failed to load Asia/Kuala_Lumpur timezone, fallback to local: %v", err)
 		loc = time.Local
@@ -107,5 +107,5 @@ func main() {
 		fmt.Printf("🕒 Created %d hourly slots for facility %s\n", 4*2, f.Name) // 4 hours * 2 days
 	}
 
-	fmt.Printf("🎉 Seeding complete: %d facilities and %d booking slots created.\n", len(facilities), totalSlots)
+	fmt.Printf("🎉 Seeding complete: %d facilities and %d booking slots created.\n", len(facilities), totalSlots)*/
 }

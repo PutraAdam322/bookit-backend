@@ -13,7 +13,6 @@ type UserRepository interface {
 	Create(user *model.User) error
 	Update(user *model.User) error
 	GetByID(id uint) (*model.User, error)
-	GetByIDPreloadBooking(id uint) (*model.User, error)
 	GetByEmail(email string) (*model.User, error)
 }
 
@@ -72,12 +71,13 @@ func (s *userService) Login(user *model.User) (string, error) {
 	}
 
 	res, err := auth.ComparePassword(existing.PasswordHash, []byte(user.Password))
-	if err != nil {
-		return "", err
-	}
 
 	if !res {
 		return "", errors.New("password does not match")
+	}
+
+	if err != nil {
+		return "", err
 	}
 
 	token, err := s.jwtService.GenerateToken(existing.ID)
@@ -121,10 +121,6 @@ func (s *userService) AdminLogin(user *model.User) (string, error) {
 
 func (s *userService) GetByID(id uint) (*model.User, error) {
 	return s.userRepository.GetByID(id)
-}
-
-func (s *userService) GetByIDPreloadBooking(id uint) (*model.User, error) {
-	return s.userRepository.GetByIDPreloadBooking(id)
 }
 
 func (s *userService) Update(user *model.User) (*model.User, error) {

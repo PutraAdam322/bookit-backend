@@ -17,6 +17,7 @@ type BookingSlotService interface {
 	Create(slot *model.BookingSlot) (*model.BookingSlot, error)
 	Update(slot *model.BookingSlot) (*model.BookingSlot, error)
 	UpdateByBooking(slot *model.BookingSlot) (*model.BookingSlot, error)
+	UpdateByCancel(slot *model.BookingSlot) (*model.BookingSlot, error)
 	GetAll() ([]model.BookingSlot, error)
 	GetByID(id uint) (*model.BookingSlot, error)
 	Delete(id uint) error
