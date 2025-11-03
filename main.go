@@ -51,6 +51,7 @@ func main() {
 	routes.FacilityRoutes(r, fctCtrl, jwtSvc)
 	routes.BookingRoutes(r, bkngCtrl, jwtSvc)
 	routes.BookingSlotRoutes(r, bkgSCtrl, jwtSvc)
+	routes.AdminRoutes(r, userCtrl, jwtSvc)
 
 	if err := r.Run(":8080"); err != nil {
 		log.Fatal(err)

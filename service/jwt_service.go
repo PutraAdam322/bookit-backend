@@ -10,7 +10,8 @@ import (
 )
 
 type jwtCustomClaim struct {
-	UserID string `json:"user_id"`
+	UserID  string `json:"user_id"`
+	IsAdmin bool   `json:"is_admin"`
 	jwt.RegisteredClaims
 }
 
@@ -34,11 +35,12 @@ func getSecretKey() string {
 	return secretKey
 }
 
-func (j *jwtService) GenerateToken(UserID uint) (string, error) {
+func (j *jwtService) GenerateToken(UserID uint, IsAdmin bool) (string, error) {
 	claims := &jwtCustomClaim{
 		strconv.Itoa(int(UserID)),
+		IsAdmin,
 		jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 6)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 15)),
 			Issuer:    j.issuer,
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},

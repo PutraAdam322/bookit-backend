@@ -16,11 +16,11 @@ func DBconnect() *gorm.DB {
 		log.Fatal("Error loading .env file")
 	}
 
-	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
-	dbName := os.Getenv("DB_DATABASE")
-	username := os.Getenv("DB_USERNAME")
-	password := os.Getenv("DB_PASSWORD")
+	host := os.Getenv("DB_HOST_LOCAL")
+	port := os.Getenv("DB_PORT_LOCAL")
+	dbName := os.Getenv("DB_DATABASE_LOCAL")
+	username := os.Getenv("DB_USERNAME_LOCAL")
+	password := os.Getenv("DB_PASSWORD_LOCAL")
 
 	dsn := username + ":" + password + "@tcp(" + host + ":" + port + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local"
 

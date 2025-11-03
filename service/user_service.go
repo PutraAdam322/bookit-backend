@@ -17,7 +17,7 @@ type UserRepository interface {
 }
 
 type JWTService interface {
-	GenerateToken(userID uint) (string, error)
+	GenerateToken(userID uint, IsAdmin bool) (string, error)
 	ValidateToken(token string) (*jwt.Token, error)
 	GetUserByTokenID(token string) (uint, error)
 }
@@ -80,7 +80,7 @@ func (s *userService) Login(user *model.User) (string, error) {
 		return "", err
 	}
 
-	token, err := s.jwtService.GenerateToken(existing.ID)
+	token, err := s.jwtService.GenerateToken(existing.ID, existing.IsAdmin)
 	if err != nil {
 		return "", err
 	}
@@ -102,7 +102,7 @@ func (s *userService) AdminLogin(user *model.User) (string, error) {
 		return "", errors.New("user does not exist")
 	}
 
-	res, err := auth.ComparePassword(existing.Password, []byte(user.Password))
+	res, err := auth.ComparePassword(existing.PasswordHash, []byte(user.Password))
 	if err != nil {
 		return "", err
 	}
@@ -111,7 +111,7 @@ func (s *userService) AdminLogin(user *model.User) (string, error) {
 		return "", errors.New("password does not match")
 	}
 
-	token, err := s.jwtService.GenerateToken(existing.ID)
+	token, err := s.jwtService.GenerateToken(existing.ID, existing.IsAdmin)
 	if err != nil {
 		return "", err
 	}

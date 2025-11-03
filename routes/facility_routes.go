@@ -12,6 +12,7 @@ func FacilityRoutes(router *gin.Engine, facilityController *controller.FacilityC
 	{
 		facilityRoutes.GET("/:id", middleware.Authenticate(jwtService), facilityController.GetByID)
 		facilityRoutes.POST("/create", middleware.Authenticate(jwtService), facilityController.Create)
+		facilityRoutes.PATCH("/:id", middleware.Authenticate(jwtService), facilityController.Update)
 		facilityRoutes.GET("", facilityController.GetAll)
 	}
 }

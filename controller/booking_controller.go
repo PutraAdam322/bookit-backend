@@ -168,6 +168,13 @@ func (c *BookingController) Cancel(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id64, err := strconv.ParseUint(idStr, 10, 64)
 	bk, errBk := c.bookingService.GetByID(uint(id64))
+	if errBk != nil {
+		ctx.JSON(http.StatusInternalServerError, apix.HTTPResponse{
+			Message: "failed to update booking",
+			Data:    err.Error(),
+		})
+		return
+	}
 
 	booking := model.Booking{
 		ID:     uint(id64),

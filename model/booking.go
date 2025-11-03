@@ -12,5 +12,5 @@ type Booking struct {
 	UserID        uint        `json:"user_id,omitempty"`
 	BookingSlotID uint        `json:"booking_slot_id,omitempty"`
 	BookingSlot   BookingSlot `gorm:"foreignKey:BookingSlotID;references:ID;" json:"booking_slot"`
-	User          User
+	User          User        `json:"-" gorm:"-"`
 }

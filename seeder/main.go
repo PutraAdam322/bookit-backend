@@ -43,7 +43,7 @@ func main() {
 	fmt.Println("✅ Database migrated.")
 
 	// timezone: Kuala Lumpur
-	/*loc, err := time.LoadLocation("Asia/Kuala_Lumpur")
+	loc, err := time.LoadLocation("Asia/Kuala_Lumpur")
 	if err != nil {
 		log.Printf("⚠️ Failed to load Asia/Kuala_Lumpur timezone, fallback to local: %v", err)
 		loc = time.Local
@@ -69,18 +69,11 @@ func main() {
 		return slots
 	}
 
-	// create facilities
-	facilities := []model.Facility{
-		{Name: "Football Field A", Price: 80.0, Capacity: 22, Available: true},
-		{Name: "Football Field B", Price: 80.0, Capacity: 22, Available: true},
-		{Name: "Swimming Pool", Price: 120.0, Capacity: 30, Available: true},
-	}
-
-	for i := range facilities {
-		if err := dbConn.Create(&facilities[i]).Error; err != nil {
-			log.Fatalf("❌ Failed to create facility %s: %v", facilities[i].Name, err)
-		}
-		fmt.Printf("🏟️ Created facility: %s (ID=%d)\n", facilities[i].Name, facilities[i].ID)
+	var facilities []model.Facility
+	tx := dbConn.Find(&facilities)
+	if tx.Error != nil {
+		fmt.Println(tx.Error)
+		return
 	}
 
 	// create hourly slots 08:00-12:00 (8-9,9-10,10-11,11-12) for both days
@@ -107,5 +100,5 @@ func main() {
 		fmt.Printf("🕒 Created %d hourly slots for facility %s\n", 4*2, f.Name) // 4 hours * 2 days
 	}
 
-	fmt.Printf("🎉 Seeding complete: %d facilities and %d booking slots created.\n", len(facilities), totalSlots)*/
+	fmt.Printf("🎉 Seeding complete: %d facilities and %d booking slots created.\n", len(facilities), totalSlots)
 }

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -41,15 +42,15 @@ func (c *FacilityController) GetByID(ctx *gin.Context) {
 		return
 	}
 	id := uint(id64)
-	blog, err := c.facilityService.GetByID(id)
+	facility, err := c.facilityService.GetByID(id)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, apix.HTTPResponse{
-			Message: "blog not found",
+			Message: "facility not found",
 			Data:    err.Error(),
 		})
 		return
 	}
-	ctx.JSON(http.StatusOK, blog)
+	ctx.JSON(http.StatusOK, facility)
 }
 
 func (c *FacilityController) GetAll(ctx *gin.Context) {
@@ -71,6 +72,15 @@ func (c *FacilityController) GetAll(ctx *gin.Context) {
 }
 
 func (c *FacilityController) Create(ctx *gin.Context) {
+	isAdmin := ctx.GetBool("is_admin")
+	fmt.Printf("%d %b", ctx.GetInt("user_id"), isAdmin)
+	if isAdmin {
+		ctx.JSON(http.StatusUnauthorized, apix.HTTPResponse{
+			Message: "unauthorized personel",
+			Data:    nil,
+		})
+		return
+	}
 	var input dto.CreateFacilityDTO
 	if err := ctx.ShouldBindJSON(&input); err != nil {
 		ve, _ := validatorx.ParseValidatorErrors(err)
@@ -101,6 +111,26 @@ func (c *FacilityController) Create(ctx *gin.Context) {
 }
 
 func (c *FacilityController) Update(ctx *gin.Context) {
+	isAdmin := ctx.GetBool("is_admin")
+	fmt.Println(isAdmin)
+	if isAdmin {
+		ctx.JSON(http.StatusUnauthorized, apix.HTTPResponse{
+			Message: "unauthorized personel",
+			Data:    nil,
+		})
+		return
+	}
+	idStr := ctx.Param("id")
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, apix.HTTPResponse{
+			Message: "facility not found",
+			Data:    err.Error(),
+		})
+		return
+	}
+
 	var input dto.UpdateFacilityDTO
 	if err := ctx.ShouldBindJSON(&input); err != nil {
 		ve, _ := validatorx.ParseValidatorErrors(err)
@@ -112,6 +142,7 @@ func (c *FacilityController) Update(ctx *gin.Context) {
 	}
 
 	facility := model.Facility{
+		ID:        uint(id),
 		Name:      input.Name,
 		Price:     input.Price,
 		Capacity:  input.Capacity,
