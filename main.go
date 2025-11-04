@@ -12,11 +12,10 @@ import (
 	db "bookit.com/utils/database"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	godotenv.Load()
+	//godotenv.Load()
 	db := db.DBconnect()
 
 	db.AutoMigrate(&model.User{}, &model.Booking{}, &model.BookingSlot{}, &model.Facility{})

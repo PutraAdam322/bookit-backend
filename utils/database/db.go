@@ -2,19 +2,13 @@ package db
 
 import (
 	"fmt"
-	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 func DBconnect() *gorm.DB {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	host := os.Getenv("DB_HOST_LOCAL")
 	port := os.Getenv("DB_PORT_LOCAL")
