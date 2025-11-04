@@ -10,11 +10,11 @@ import (
 
 func DBconnect() *gorm.DB {
 
-	host := os.Getenv("DB_HOST_LOCAL")
-	port := os.Getenv("DB_PORT_LOCAL")
-	dbName := os.Getenv("DB_DATABASE_LOCAL")
-	username := os.Getenv("DB_USERNAME_LOCAL")
-	password := os.Getenv("DB_PASSWORD_LOCAL")
+	host := os.Getenv("DB_HOST")
+	port := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_DATABASE")
+	username := os.Getenv("DB_USERNAME")
+	password := os.Getenv("DB_PASSWORD")
 
 	dsn := username + ":" + password + "@tcp(" + host + ":" + port + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local"
 
