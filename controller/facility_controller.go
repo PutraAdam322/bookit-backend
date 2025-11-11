@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -73,8 +72,7 @@ func (c *FacilityController) GetAll(ctx *gin.Context) {
 
 func (c *FacilityController) Create(ctx *gin.Context) {
 	isAdmin := ctx.GetBool("is_admin")
-	fmt.Printf("%d %b", ctx.GetInt("user_id"), isAdmin)
-	if isAdmin {
+	if !isAdmin {
 		ctx.JSON(http.StatusUnauthorized, apix.HTTPResponse{
 			Message: "unauthorized personel",
 			Data:    nil,
@@ -112,8 +110,7 @@ func (c *FacilityController) Create(ctx *gin.Context) {
 
 func (c *FacilityController) Update(ctx *gin.Context) {
 	isAdmin := ctx.GetBool("is_admin")
-	fmt.Println(isAdmin)
-	if isAdmin {
+	if !isAdmin {
 		ctx.JSON(http.StatusUnauthorized, apix.HTTPResponse{
 			Message: "unauthorized personel",
 			Data:    nil,

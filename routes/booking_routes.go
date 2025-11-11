@@ -12,6 +12,7 @@ func BookingRoutes(router *gin.Engine, BookingController *controller.BookingCont
 	{
 		bookingRoutes.POST("/create", middleware.Authenticate(jwtService), BookingController.Create)
 		bookingRoutes.GET("/mybook", middleware.Authenticate(jwtService), BookingController.GetByUserID)
+		bookingRoutes.GET("/admin/bookings", middleware.Authenticate(jwtService), BookingController.GetAll)
 		bookingRoutes.PATCH(("/:id/cancel"), middleware.Authenticate(jwtService), BookingController.Cancel)
 	}
 }
