@@ -19,7 +19,7 @@ type UserRepository interface {
 type JWTService interface {
 	GenerateToken(userID uint, IsAdmin bool) (string, error)
 	ValidateToken(token string) (*jwt.Token, error)
-	GetUserByTokenID(token string) (uint, error)
+	GetUserByTokenID(token string) (uint, bool, error)
 }
 
 type userService struct {

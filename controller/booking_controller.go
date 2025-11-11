@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -81,6 +82,15 @@ func (c *BookingController) GetByID(ctx *gin.Context) {
 }
 
 func (c *BookingController) GetAll(ctx *gin.Context) {
+	isAdmin := ctx.GetBool("is_admin")
+	fmt.Println(isAdmin)
+	if !isAdmin {
+		ctx.JSON(http.StatusUnauthorized, apix.HTTPResponse{
+			Message: "unauthorized personel",
+			Data:    nil,
+		})
+		return
+	}
 	bookings, err := c.bookingService.GetAll()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, apix.HTTPResponse{
@@ -111,7 +121,7 @@ func (c *BookingController) Create(ctx *gin.Context) {
 
 	booking := model.Booking{
 		TotalPrice:    input.TotalPrice,
-		Status:        "Confirmed",
+		Status:        "confirmed",
 		BookingSlotID: input.BookingSlotID,
 		UserID:        UserID,
 	}

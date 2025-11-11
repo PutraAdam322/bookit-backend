@@ -42,6 +42,48 @@ func main() {
 	}
 	fmt.Println("✅ Database migrated.")
 
+	/*dbConn.Unscoped().Where("1 = 1").Delete(&model.User{})
+	pw1, _ := auth.HashAndSalt("user1234")
+	pw2, _ := auth.HashAndSalt("admin123")
+
+	users := []model.User{
+		{
+			Name:         "Admin User",
+			Email:        "admin@bookit.com",
+			PasswordHash: pw2, // ⚠️ Hash this if your app expects hashed passwords
+			IsAdmin:      true,
+		},
+		{
+			Name:         "John Lenon",
+			Email:        "john@gmail.com",
+			PasswordHash: pw1, // ⚠️ Same note — hash it in real use
+			IsAdmin:      false,
+		},
+		{
+			Name:         "Jane Doe",
+			Email:        "jane@gmail.com",
+			PasswordHash: pw1,
+			IsAdmin:      false,
+		},
+	}
+
+	for _, u := range users {
+		var existing model.User
+		err := dbConn.Where("email = ?", u.Email).First(&existing).Error
+		if err == gorm.ErrRecordNotFound {
+			if err := dbConn.Create(&u).Error; err != nil {
+				log.Printf("❌ Failed to seed user %s: %v", u.Email, err)
+			} else {
+				log.Printf("👤 User seeded: %s", u.Email)
+			}
+		} else {
+			log.Printf("⚠️ Skipping existing user: %s", u.Email)
+		}
+	} */
+
+	var facilities []model.Facility
+	dbConn.Find(&facilities)
+
 	// timezone: Kuala Lumpur
 	loc, err := time.LoadLocation("Asia/Kuala_Lumpur")
 	if err != nil {
@@ -69,13 +111,6 @@ func main() {
 		return slots
 	}
 
-	var facilities []model.Facility
-	tx := dbConn.Find(&facilities)
-	if tx.Error != nil {
-		fmt.Println(tx.Error)
-		return
-	}
-
 	// create hourly slots 08:00-12:00 (8-9,9-10,10-11,11-12) for both days
 	totalSlots := 0
 	for _, f := range facilities {
@@ -100,5 +135,5 @@ func main() {
 		fmt.Printf("🕒 Created %d hourly slots for facility %s\n", 4*2, f.Name) // 4 hours * 2 days
 	}
 
-	fmt.Printf("🎉 Seeding complete: %d facilities and %d booking slots created.\n", len(facilities), totalSlots)
+	//fmt.Printf("🎉 Seeding complete: %d facilities and %d booking slots created.\n", len(facilities), totalSlots)
 }

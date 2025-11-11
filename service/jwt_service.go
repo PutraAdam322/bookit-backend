@@ -65,19 +65,20 @@ func (j *jwtService) ValidateToken(token string) (*jwt.Token, error) {
 	})
 }
 
-func (j *jwtService) GetUserByTokenID(token string) (uint, error) {
+func (j *jwtService) GetUserByTokenID(token string) (uint, bool, error) {
 	tToken, err := j.ValidateToken(token)
 	if err != nil {
-		return 0, err
+		return 0, false, err
 	}
 
 	claims := tToken.Claims.(jwt.MapClaims)
 	idStr := fmt.Sprintf("%v", claims["user_id"])
 	id, err := strconv.Atoi(idStr)
+	isAdmin, _ := claims["is_admin"].(bool)
 
 	if err != nil {
-		return 0, err
+		return 0, false, err
 	}
 
-	return uint(id), nil
+	return uint(id), isAdmin, nil
 }
